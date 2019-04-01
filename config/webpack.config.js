@@ -1,10 +1,10 @@
-import path from 'path';
-import webpack from 'webpack';
+const path = require('path');
+const webpack = require('webpack');
 
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import CopyPlugin from 'copy-webpack-plugin';
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const CopyPlugin = require('copy-webpack-plugin');
 
 /**
  * 
@@ -16,12 +16,17 @@ export default function (env) {
   const isProduction = (env.PROD) ? true : false;
   const MODE = (isProduction) ? 'production' : 'development';
 
-  const PROJECT_PATH = path.join(__dirname, '../');
+  const PROJECT_PATH = path.join(__dirname, '..');
   const SOURCE_PATH = path.join(PROJECT_PATH, "./src");
+
+  console.log(PROJECT_PATH);
+  console.log(SOURCE_PATH);
+
+  const INPUT_PATH = path.join(SOURCE_PATH, './index.jsx');
   const OUTPUT_PATH = (!isProduction) ? path.join(PROJECT_PATH, "./dist") : path.join(PROJECT_PATH, "./build");
 
   const HOST = env.HOST || 'localhost';
-  const PORT = env.PORT || 8080;
+  const PORT = env.PORT || 3000;
   const HOT_MW = `webpack-hot-middleware/client?path=http://${HOST}:${PORT}/__webpack_hmr&reload=true`;
 
   console.log('Running in mode [' + MODE + ']')
@@ -34,7 +39,7 @@ export default function (env) {
     target: 'web',
     mode: MODE,
     entry: {
-      app: (isProduction) ? [path.join(SOURCE_PATH, '/index.js')] : [path.join(SOURCE_PATH, '/index.js'), HOT_MW],
+      app: (isProduction) ? [INPUT_PATH] : [INPUT_PATH, HOT_MW],
     },
     output: {
       path: OUTPUT_PATH,
@@ -46,18 +51,18 @@ export default function (env) {
     },
     module: {
       rules: [
-        {
-          enforce: "pre",
-          test: /\.jsx$/,
-          exclude: /node_modules/,
-          loader: "eslint-loader",
-          options: {
-            eslintPath: PROJECT_PATH,
-          },
-        },
+        // {
+        //   enforce: "pre",
+        //   test: /\.jsx?$/,
+        //   exclude: /node_modules/,
+        //   loader: "eslint-loader",
+        //   options: {
+        //     eslintPath: PROJECT_PATH,
+        //   },
+        // },
         {
           test: /\.jsx?$/,
-          use: "babel-loader",
+          loader: "babel-loader",
           exclude: /node_modules/,
           options: {
             presets: ['@babel/preset-env']
@@ -134,9 +139,9 @@ export default function (env) {
       React: "react",
       ReactDOM: 'react-dom',
     }),
-    new CopyPlugin([
-      { from: path.join(PROJECT_PATH, "./static"), to: OUTPUT_PATH, ignore: ['*.html'] },
-    ]),
+    // new CopyPlugin([
+    //   { from: path.join(PROJECT_PATH, "./static"), to: OUTPUT_PATH, ignore: ['*.html'] },
+    // ]),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.join(PROJECT_PATH, "./static/index.html"),
@@ -176,6 +181,7 @@ export default function (env) {
   } else {
     config.devtool = 'source-map';
     config.plugins.push(
+      new webpack.LoaderOptionsPlugin({ options: {} }),
       new webpack.HotModuleReplacementPlugin({ multiStep: false }), // enable HMR globally
       new webpack.NoEmitOnErrorsPlugin(),
       new webpack.optimize.OccurrenceOrderPlugin(true),

@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, Middleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducer, { initialState } from './reducers';
 
 // Initialize the redux middleware

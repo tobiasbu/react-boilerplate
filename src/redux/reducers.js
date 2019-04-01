@@ -1,11 +1,11 @@
-import { combineReducers, ReducersMapObject } from 'redux';
+import { combineReducers } from 'redux';
 
-function navigationReducer(state, action) {
-
+function navigationReducer() {
+  return '/';
 }
 
-function shaftReducer(state, action) {
-
+function shaftReducer() {
+  return {};
 }
 
 /**
@@ -25,4 +25,5 @@ export const initialState = {
 };
 
 const rootReducer = combineReducers(reducers);
+
 export default rootReducer;
