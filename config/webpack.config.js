@@ -46,8 +46,75 @@ export default function (env) {
     },
     module: {
       rules: [
-
+        {
+          enforce: "pre",
+          test: /\.jsx$/,
+          exclude: /node_modules/,
+          loader: "eslint-loader",
+          options: {
+            eslintPath: PROJECT_PATH,
+          },
+        },
+        {
+          test: /\.jsx?$/,
+          use: "babel-loader",
+          exclude: /node_modules/,
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        },
+        {
+          test: /\.css$/,
+          use:
+            (isProduction) ?
+              [MiniCssExtractPlugin.loader, 'css-loader']
+              :
+              [
+                'style-loader',
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 1
+                  }
+                },
+              ],
+        },
+        {
+          test: /\.(jpe?g|png|gif|svg)$/i,
+          loaders: [
+            'file-loader?hash=sha512&digest=hex&name=img/[hash].[ext]',
+            'image-webpack-loader?bypassOnDebug&optipng.optimizationLevel=7&gifsicle.interlaced=false',
+          ],
+        },
+        {
+          test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+          use: [{
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              // Limit at 50k. Above that it emits separate files
+              limit: 50000,
+              outputPath: './fonts/',
+            },
+          }]
+        },
       ]
+    },
+    optimization: {
+      runtimeChunk: false,
+      minimize: false,
+      splitChunks: {
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            priority: 1,
+            minChunks: 2,
+            minSize: 0,
+          },
+        },
+      }
     },
     externals: {
       "React": "React",

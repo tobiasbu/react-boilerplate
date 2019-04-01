@@ -1,0 +1,22 @@
+{
+  "extends": "eslint-config-airbnb",
+  "rules": {
+    "no-boolean-literal-compare": true,
+    "import-name": false,
+    "no-console": "off",
+    "camelcase": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    }
+  },
+  "ecmaFeatures": {
+    "jsx": false
+  },
+  "env": {
+    "browser": true
+  }
+}
